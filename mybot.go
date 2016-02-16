@@ -57,10 +57,6 @@ func main() {
 			if symbol := getSymbol(m.Text); len(symbol) > 0 {
 				m.Text = getQuote(symbol)
 				postMessage(ws, m)
-			} else {
-				// huh?
-				m.Text = fmt.Sprintf("sorry, that does not compute\n")
-				postMessage(ws, m)
 			}
 		}
 	}
