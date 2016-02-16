@@ -86,7 +86,7 @@ func getQuote(sym string) string {
 	if err != nil {
 		return fmt.Sprintf("error: %v", err)
 	}
-	if len(rows) >= 1 && len(rows[0]) == 5 {
+	if len(rows) >= 1 && len(rows[0]) >= 4 {
 		return fmt.Sprintf("%s (%s) is trading at $%s (change %s)", rows[0][0], rows[0][1], rows[0][2], rows[0][3])
 	}
 	return fmt.Sprintf("unknown response format (symbol was \"%s\")", sym)
