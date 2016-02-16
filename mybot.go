@@ -32,6 +32,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"regexp"
 )
 
 func main() {
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	// start a websocket-based Real Time API session
-	ws, id := slackConnect(os.Args[1])
+	ws, _ := slackConnect(os.Args[1])
 	fmt.Println("mybot ready, ^C exits")
 
 	for {
@@ -52,16 +53,10 @@ func main() {
 		}
 
 		// see if we're mentioned
-		if m.Type == "message" && strings.HasPrefix(m.Text, "<@"+id+">") {
-			// if so try to parse if
-			parts := strings.Fields(m.Text)
-			if len(parts) == 3 && parts[1] == "stock" {
-				// looks good, get the quote and reply with the result
-				go func(m Message) {
-					m.Text = getQuote(parts[2])
-					postMessage(ws, m)
-				}(m)
-				// NOTE: the Message object is copied, this is intentional
+		if m.Type == "message" {
+			if symbol := getSymbol(m.Text); len(symbol) > 0 {
+				m.Text = getQuote(symbol)
+				postMessage(ws, m)
 			} else {
 				// huh?
 				m.Text = fmt.Sprintf("sorry, that does not compute\n")
@@ -70,6 +65,17 @@ func main() {
 		}
 	}
 }
+
+func getSymbol(msg string) string {
+	re := regexp.MustCompile("\\$([[:alnum:]]*)")
+	matches := re.FindStringSubmatch(msg)
+	if len(matches) >= 2 {
+		return matches[1]
+	}
+	return ""
+
+}
+
 
 // Get the quote via Yahoo. You should replace this method to something
 // relevant to your team!
