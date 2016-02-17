@@ -64,7 +64,7 @@ func main() {
 }
 
 func getSymbol(msg string) string {
-	re := regexp.MustCompile("\\$([[:alnum:]]*)")
+	re := regexp.MustCompile("[\\$|￥]([[:alnum:]]*)")
 	matches := re.FindStringSubmatch(msg)
 	if len(matches) >= 2 {
 		return matches[1]

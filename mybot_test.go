@@ -13,6 +13,7 @@ func TestGetSymbol(t *testing.T) {
 		{"$CMCSA", "CMCSA"},
 		{"$CMCSA is up", "CMCSA"},
 		{"CMCSA", ""},
+		{"￥CMCSA", "CMCSA"},
 	}
 	for _, c := range cases {
 		if sym := getSymbol(c.text); sym != c.symbol {
