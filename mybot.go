@@ -49,7 +49,8 @@ func main() {
 		// read each incoming message
 		m, err := getMessage(ws)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			continue
 		}
 
 		// see if we're mentioned
