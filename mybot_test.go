@@ -6,19 +6,33 @@ import (
 
 func TestGetSymbol(t *testing.T) {
 	cases := []struct{
-		text, symbol string
+		text string 
+		symbol []string
 	} {
-		{"check $CMCSA", "CMCSA"},
-		{"check $CMCSA!", "CMCSA"},
-		{"$CMCSA", "CMCSA"},
-		{"$CMCSA is up", "CMCSA"},
-		{"CMCSA", ""},
-		{"￥CMCSA", "CMCSA"},
+		{"check $GOOG", []string{"GOOG"}},
+		{"check $GOOG!", []string{"GOOG"}},
+		{"$GOOG", []string{"GOOG"}},
+		{"$GOOG is up", []string{"GOOG"}},
+		{"GOOG", []string{}},
+		{"￥GOOG", []string{"GOOG"}},
+		{"￥GOOG and $AAPL", []string{"GOOG", "AAPL"}},
 	}
 	for _, c := range cases {
-		if sym := getSymbol(c.text); sym != c.symbol {
-			t.Errorf("Expected %s from [%s], got %s\n", c.symbol, c.text, sym)
+		if sym := getSymbol(c.text); !sliceEqual(sym,c.symbol) {
+			t.Errorf("Expected %q from [%s], got %q\n", c.symbol, c.text, sym)
 		}
 	}
+}
+
+func sliceEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, ai := range a {
+		if ai != b[i] {
+			return false
+		}
+	}
+	return true
 }
 

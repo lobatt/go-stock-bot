@@ -55,29 +55,32 @@ func main() {
 
 		// see if we're mentioned
 		if m.Type == "message" {
-			if symbol := getSymbol(m.Text); len(symbol) > 0 {
-				m.Text = getQuote(symbol)
+			if symbols := getSymbol(m.Text); len(symbols) > 0 {
+				m.Text = getQuote(symbols)
 				postMessage(ws, m)
 			}
 		}
 	}
 }
 
-func getSymbol(msg string) string {
+func getSymbol(msg string) []string {
 	re := regexp.MustCompile("[\\$|￥]([[:alnum:]]*)")
-	matches := re.FindStringSubmatch(msg)
-	if len(matches) >= 2 {
-		return matches[1]
+	var symbols = make([]string, 0, 1)
+	matches := re.FindAllStringSubmatch(msg, -1)
+	for _, match := range matches {
+		if len(match) >= 2 {
+			symbols = append(symbols, match[1])
+		}
 	}
-	return ""
+	return symbols
 
 }
 
 
 // Get the quote via Yahoo. You should replace this method to something
 // relevant to your team!
-func getQuote(sym string) string {
-	sym = strings.ToUpper(sym)
+func getQuote(symbols []string) string {
+	sym := strings.ToUpper(strings.Join(symbols, ","))
 	url := fmt.Sprintf("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=nsl1p2&e=.csv", sym)
 	resp, err := http.Get(url)
 	if err != nil {
