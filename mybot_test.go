@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"regexp"
 )
 
 func TestGetSymbol(t *testing.T) {
@@ -34,5 +35,23 @@ func sliceEqual(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func TestGetQuote(t *testing.T) {
+	cases := []struct {
+		input []string
+		outputLines int
+	} {
+		{[]string{"GOOG","AAPL"}, 2},
+	}
+
+	pattern := regexp.MustCompile("\\(([[:alnum:]]+)\\)")
+	for _, c := range cases {
+		msg := getQuote(c.input)
+		matches := pattern.FindAllStringSubmatch(msg, -1)
+		if len(matches) != c.outputLines {
+			t.Errorf("Expected %d result(s) from %q, got %d\n", c.outputLines, c.input, len(matches))
+		}
+	}
 }
 

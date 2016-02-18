@@ -91,7 +91,11 @@ func getQuote(symbols []string) string {
 		return fmt.Sprintf("error: %v", err)
 	}
 	if len(rows) >= 1 && len(rows[0]) >= 4 {
-		return fmt.Sprintf("%s (%s) is trading at $%s (change %s)", rows[0][0], rows[0][1], rows[0][2], rows[0][3])
+		msg := ""
+		for _, row := range rows {
+			msg += fmt.Sprintf("%s (%s) is trading at $%s (change %s)\n", row[0], row[1], row[2], row[3])
+		}
+		return msg
 	}
 	return fmt.Sprintf("unknown response format (symbol was \"%s\")", sym)
 }
